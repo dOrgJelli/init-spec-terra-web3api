@@ -1,0 +1,31 @@
+type Mutation {
+  sign(
+    options: SignOptions!
+  ): StdSignature!
+
+  multiSign(
+    options: [SignOptions!]!
+  ): [StdSignature!]!
+}
+
+type SignOptions {
+  wallet: PublicKey!
+  payload: Bytes!
+}
+
+union PublicKey = SimplePublicKey
+  | MultisigPublicKey
+
+type StdSignature {
+  signature: Bytes!
+  pub_key: PublicKey!
+}
+
+type SimplePublicKey {
+  value: String!
+}
+
+type MultisigPublicKey {
+  threshold: String!
+  pubkeys: [SimplePublicKey!]!
+}

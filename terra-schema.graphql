@@ -1,0 +1,111 @@
+"""
+Note:
+The imported Web3API below would be implemented as
+a "client plugin". This means that its logic & data reside
+in the client's native language (JS for ex), and not in WASM.
+For increased private key security, this plugin could defer to
+a browser extension (ex: Metamask) where the privkey is stored.
+"""
+#import { Mutation, StdSignature, PublicKey } into Signer from "ens/api.signer.terra.eth"
+
+type Mutation {
+
+  # Msg
+  createMsg(
+    from: String!
+    to: String!
+    options: MsgOptions
+  ): Msg!
+
+  # Tx
+  createTx(
+    options: CreateTxOptions!
+  ): UnsignedTx!
+
+  createAndSignTx(
+    wallet: Signer_PublicKey!
+    options: CreateTxOptions!
+  ): StdTx!
+}
+
+### Tx Types
+
+type UnsignedTx {
+  chain_id: String!
+  account_number: String!
+  sequence: String!
+  fee: StdFee!
+  msgs: [Msg!]!
+  memo: String!
+}
+
+type StdTx {
+  msg: [Msg!]!
+  fee: StdFee!
+  signatures: [Signer_StdSignature!]!
+  memo: String!
+}
+
+type CreateTxOptions {
+  msgs: [Msg!]!
+  fee: StdFee
+  memo: String
+  gasPrices: [Coin!]
+  gasAdjustment: BigFloat
+  feeDenoms: [String!]
+  account_number: UInt32
+  sequence: UInt32
+}
+
+### Coin Types
+
+enum CoinDenom {
+  ulana,
+  usdr,
+  uusd,
+  ukrw,
+  umnt,
+  ueur,
+  ucny,
+  ujpy,
+  ugbp,
+  uinr,
+  ucad,
+  uchf,
+  uaud,
+  usgd,
+}
+
+type Coin {
+  denom: CoinDenom!
+  amount: BigInt!
+}
+
+type StdFee {
+  gas: String!
+  amount: Coin!
+}
+
+### Msg Types
+
+union Msg = BankMsg
+  | DistributionMsg
+  | GovMsg
+  | MarketMsg
+  | MsgAuthMsg
+  | OracleMsg
+  | SlashingMsg
+  | StakingMsg
+  | WasmMsg
+
+type MsgOptions {
+  coins: [Coin!]
+}
+
+type BankMsg {
+  from: String!
+  to: String!
+  amount: [Coin!]!
+}
+
+# TODO: fully fleshed out msg types
